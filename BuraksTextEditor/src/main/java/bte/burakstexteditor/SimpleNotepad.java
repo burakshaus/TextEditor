@@ -11,7 +11,7 @@ import java.io.*;
 public class SimpleNotepad extends Application{
     private TextArea textArea = new TextArea();
     private File currentFile = null;
-
+    private boolean isModified = false;
     private Stage primaryStage;
 
     public static void main(String[] args){
@@ -31,10 +31,14 @@ public class SimpleNotepad extends Application{
         MenuItem saveFile = new MenuItem("Save");
         MenuItem exitApp = new MenuItem("Exit");
 
-        newFile.setOnAction(e -> newFile());
+        newFile.setOnAction(e -> newFile(stage));
         openFile.setOnAction(e -> openFile(stage));
         saveFile.setOnAction(e -> saveFile(stage));
-        exitApp.setOnAction(e -> stage.close());
+        exitApp.setOnAction(e -> {
+            if (!confirmUnsavedChanged(stage)){
+                stage.close();
+            }
+        });
 
         fileMenu.getItems().addAll(newFile, openFile, saveFile, new SeparatorMenuItem(), exitApp);
         menuBar.getMenus().add(fileMenu);
@@ -42,19 +46,24 @@ public class SimpleNotepad extends Application{
         BorderPane layout = new BorderPane();
         layout.setTop(menuBar);
         layout.setCenter(textArea);
+        textArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            isModified = true;
+        });
 
         Scene scene = new Scene(layout, 600, 400);
         stage.setScene(scene);
         stage.show();
     }
 
-    private void newFile(){
+    private void newFile(Stage stage){
+        if (!confirmUnsavedChanged(stage)) return ;
         textArea.clear();
         primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
         currentFile = null;
     }
 
     private void openFile(Stage stage){
+        if (!confirmUnsavedChanged(stage)) return ;
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(stage);
         if (file != null){
@@ -81,6 +90,30 @@ public class SimpleNotepad extends Application{
             }
         }
         primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
+    }
+    private boolean confirmUnsavedChanged(Stage stage){
+        if (!isModified) return true;
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Unsaved Changes");
+        alert.setHeaderText("You have unsaved changes.");
+        alert.setContentText("Are you sure you want to continue?");
+
+        ButtonType saveBtn = new ButtonType("Save");
+        ButtonType dontSaveBtn = new ButtonType("Don't Save");
+        ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(saveBtn, dontSaveBtn, cancelBtn);
+        var result = alert.showAndWait().orElse(cancelBtn);
+
+        if (result == saveBtn){
+            saveFile(stage);
+            return true;
+        } else if (result == dontSaveBtn){
+            return true;
+        } else{
+            return false;
+        }
     }
 }
 
