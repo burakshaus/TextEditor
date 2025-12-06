@@ -12,13 +12,16 @@ public class SimpleNotepad extends Application{
     private TextArea textArea = new TextArea();
     private File currentFile = null;
 
+    private Stage primaryStage;
+
     public static void main(String[] args){
         launch(args);
     }
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("BuraksTextEditor");
-
+        this.primaryStage = stage;
+        primaryStage.setTitle("BuraksTextEditor");
         // Menu bar
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
@@ -47,6 +50,7 @@ public class SimpleNotepad extends Application{
 
     private void newFile(){
         textArea.clear();
+        primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
         currentFile = null;
     }
 
@@ -61,6 +65,7 @@ public class SimpleNotepad extends Application{
                 e.printStackTrace();
             }
         }
+        primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
     }
     private void saveFile(Stage stage){
         if (currentFile == null){
@@ -75,6 +80,7 @@ public class SimpleNotepad extends Application{
                 e.printStackTrace();
             }
         }
+        primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
     }
 }
 
