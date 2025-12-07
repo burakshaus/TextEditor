@@ -22,6 +22,9 @@ public class SimpleNotepad extends Application{
         stage.setTitle("BuraksTextEditor");
         this.primaryStage = stage;
         primaryStage.setTitle("BuraksTextEditor");
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            System.setProperty("apple.laf.useScreenMenuBar", "false");
+        }
         // Menu bar
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
@@ -76,20 +79,33 @@ public class SimpleNotepad extends Application{
     private void openFile(Stage stage){
         if (!confirmUnsavedChanged(stage)) return ;
         FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Text Files (*.txt)",  "*.txt"),
+                new FileChooser.ExtensionFilter("Markdown (*.md)", "*.md"),
+                new FileChooser.ExtensionFilter("Log Files (*.log)", "*.log"),
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
         File file = fileChooser.showOpenDialog(stage);
         if (file != null){
             try(BufferedReader reader = new BufferedReader(new FileReader(file))){
                 textArea.setText(reader.lines().reduce("", (a,b) -> a + "\n" + b));
                 currentFile = file;
+                primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
+                isModified = false;
             }catch (IOException e){
                 e.printStackTrace();
             }
         }
-        primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
     }
     private void saveFile(Stage stage){
         if (currentFile == null){
             FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Text Files (*.txt)",  "*.txt"),
+                    new FileChooser.ExtensionFilter("Markdown (*.md)", "*.md"),
+                    new FileChooser.ExtensionFilter("Log Files (*.log)", "*.log"),
+                    new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
             fileChooser.setTitle("Save File");
             currentFile = fileChooser.showSaveDialog(stage);
         }
