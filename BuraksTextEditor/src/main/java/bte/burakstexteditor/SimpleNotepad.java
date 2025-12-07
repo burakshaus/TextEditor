@@ -25,6 +25,18 @@ public class SimpleNotepad extends Application{
         // Menu bar
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
+        Menu editMenu = new Menu("Edit");
+
+        MenuItem cutItem = new MenuItem("Cut");
+        MenuItem copyItem = new MenuItem("Copy");
+        MenuItem pasteItem = new MenuItem("Paste");
+        MenuItem selectAllItem = new MenuItem("Select All");
+        cutItem.setOnAction( e -> textArea.cut());
+        copyItem.setOnAction( e -> textArea.copy());
+        pasteItem.setOnAction( e -> textArea.paste());
+        selectAllItem.setOnAction( e -> textArea.selectAll());
+
+        editMenu.getItems().addAll(cutItem, copyItem, pasteItem, selectAllItem);
 
         MenuItem newFile = new MenuItem("New");
         MenuItem openFile = new MenuItem("Open");
@@ -41,8 +53,7 @@ public class SimpleNotepad extends Application{
         });
 
         fileMenu.getItems().addAll(newFile, openFile, saveFile, new SeparatorMenuItem(), exitApp);
-        menuBar.getMenus().add(fileMenu);
-
+        menuBar.getMenus().addAll(fileMenu, editMenu);
         BorderPane layout = new BorderPane();
         layout.setTop(menuBar);
         layout.setCenter(textArea);
