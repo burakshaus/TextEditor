@@ -1,0 +1,18 @@
+.root {
+    -fx-base: #2b2b2b;
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: white;
+}
+
+.text-area {
+    -fx-control-inner-background: #1e1e1e;
+    -fx-text-fill: white;
+}
+
+.menu-bar {
+    -fx-background-color: #2b2b2b;
+}
+
+.label {
+    -fx-text-fill: white;
+}

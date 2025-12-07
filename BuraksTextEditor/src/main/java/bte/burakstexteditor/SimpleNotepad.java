@@ -34,7 +34,9 @@ public class SimpleNotepad extends Application{
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
         Menu editMenu = new Menu("Edit");
-
+        Menu viewMenu = new Menu("View");
+        CheckMenuItem darkModeItem = new CheckMenuItem("Dark Mode");
+        viewMenu.getItems().add(darkModeItem);
         MenuItem cutItem = new MenuItem("Cut");
         MenuItem copyItem = new MenuItem("Copy");
         MenuItem pasteItem = new MenuItem("Paste");
@@ -66,8 +68,10 @@ public class SimpleNotepad extends Application{
             }
         });
 
+
+
         fileMenu.getItems().addAll(newFile, openFile, saveFile, new SeparatorMenuItem(), exitApp);
-        menuBar.getMenus().addAll(fileMenu, editMenu);
+        menuBar.getMenus().addAll(fileMenu, editMenu, viewMenu);
         BorderPane layout = new BorderPane();
         layout.setTop(menuBar);
         layout.setCenter(textArea);
@@ -82,6 +86,13 @@ public class SimpleNotepad extends Application{
 
 
         Scene scene = new Scene(layout, 600, 400);
+        darkModeItem.setOnAction(e -> {
+            if (darkModeItem.isSelected()) {
+                scene.getStylesheets().add(getClass().getResource("dark-theme.css").toExternalForm());
+            } else {
+                scene.getStylesheets().clear(); // clears all (simplest)
+            }
+        });
         stage.setScene(scene);
         stage.show();
     }
