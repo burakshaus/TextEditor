@@ -1,9 +1,11 @@
 package bte.burakstexteditor;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import java.io.*;
@@ -13,6 +15,9 @@ public class SimpleNotepad extends Application{
     private File currentFile = null;
     private boolean isModified = false;
     private Stage primaryStage;
+
+    private Label lineColLabel = new Label("Line Column");
+    private Label charCountLabel = new Label("Char Count");
 
     public static void main(String[] args){
         launch(args);
@@ -38,6 +43,12 @@ public class SimpleNotepad extends Application{
 
         editMenu.getItems().addAll(cutItem, copyItem, pasteItem, selectAllItem);
 
+        HBox statusBar = new HBox();
+        statusBar.setSpacing(20);
+        statusBar.setPadding(new Insets(5));
+        statusBar.setStyle("-fx-background-color: #e2e2e2");
+        statusBar.getChildren().addAll(lineColLabel,charCountLabel);
+
         MenuItem newFile = new MenuItem("New");
         MenuItem openFile = new MenuItem("Open");
         MenuItem saveFile = new MenuItem("Save");
@@ -57,9 +68,15 @@ public class SimpleNotepad extends Application{
         BorderPane layout = new BorderPane();
         layout.setTop(menuBar);
         layout.setCenter(textArea);
+        layout.setBottom(statusBar);
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             isModified = true;
+            updateStatusBar();
         });
+        textArea.caretPositionProperty().addListener((obs, oldPos, newPos) -> {
+            updateStatusBar();
+        });
+
 
         Scene scene = new Scene(layout, 600, 400);
         stage.setScene(scene);
@@ -126,5 +143,36 @@ public class SimpleNotepad extends Application{
             return false;
         }
     }
+    private void updateStatusBar() {
+        String text = textArea.getText();
+        int caretPos = textArea.getCaretPosition();
+
+        // Safety: caretPos can be > text.length() for a few ms during deletion
+        if (caretPos > text.length()) {
+            caretPos = text.length();
+        }
+        if (caretPos < 0) caretPos = 0;
+
+        // Character count
+        int charCount = text.length();
+        charCountLabel.setText("Char Count: " + charCount);
+
+        // If empty, reset safely
+        if (text.isEmpty()) {
+            lineColLabel.setText("Line: 1, Col: 1");
+            return;
+        }
+
+        // LINE NUMBER (safe)
+        int line = text.substring(0, caretPos).split("\n", -1).length;
+
+        // COLUMN NUMBER (safe)
+        int lastNewLine = text.lastIndexOf('\n', caretPos - 1);
+        int column = caretPos - (lastNewLine + 1);
+        if (column < 0) column = 0;
+
+        lineColLabel.setText("Line: " + line + ", Col: " + (column + 1));
+    }
+
 }
 
