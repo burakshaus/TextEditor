@@ -16,6 +16,7 @@ import java.io.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import java.util.prefs.Preferences;
 
 public class SimpleNotepad extends Application{
     private TextArea textArea = new TextArea();
@@ -25,6 +26,9 @@ public class SimpleNotepad extends Application{
 
     private Label lineColLabel = new Label("Line Column");
     private Label charCountLabel = new Label("Char Count");
+
+    private final Preferences prefs = Preferences.userNodeForPackage(SimpleNotepad.class);
+    private static final String PREF_DARK_MODE= "darkMode";
 
     public static void main(String[] args){
         launch(args);
@@ -147,10 +151,21 @@ public class SimpleNotepad extends Application{
                 if (!scene.getStylesheets().contains(darkCss)) {
                     scene.getStylesheets().add(darkCss);
                 }
+                prefs.putBoolean(PREF_DARK_MODE, true);
             } else {
                 scene.getStylesheets().remove(darkCss);
+                prefs.putBoolean(PREF_DARK_MODE, false);
             }
         });
+
+
+        boolean darkModeEnabled = prefs.getBoolean(PREF_DARK_MODE, false);
+
+        if (darkModeEnabled) {
+            scene.getStylesheets().add(darkCss);
+            darkModeItem.setSelected(true);
+        }
+
 
         stage.setScene(scene);
         stage.show();
