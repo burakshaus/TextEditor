@@ -37,6 +37,10 @@ public class SimpleNotepad extends Application{
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             System.setProperty("apple.laf.useScreenMenuBar", "false");
         }
+
+
+
+        String darkCss = getClass().getResource("dark-theme.css").toExternalForm();
         // Menu bar
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
@@ -85,9 +89,8 @@ public class SimpleNotepad extends Application{
         HBox statusBar = new HBox();
         statusBar.setSpacing(20);
         statusBar.setPadding(new Insets(5));
-        statusBar.setStyle("-fx-background-color: #e2e2e2");
         statusBar.getChildren().addAll(lineColLabel,charCountLabel);
-
+        statusBar.getStyleClass().add("status-Bar");
         MenuItem newFile = new MenuItem("New");
         MenuItem openFile = new MenuItem("Open");
         MenuItem saveFile = new MenuItem("Save");
@@ -141,11 +144,14 @@ public class SimpleNotepad extends Application{
         Scene scene = new Scene(layout, 600, 400);
         darkModeItem.setOnAction(e -> {
             if (darkModeItem.isSelected()) {
-                scene.getStylesheets().add(getClass().getResource("dark-theme.css").toExternalForm());
+                if (!scene.getStylesheets().contains(darkCss)) {
+                    scene.getStylesheets().add(darkCss);
+                }
             } else {
-                scene.getStylesheets().clear(); // clears all (simplest)
+                scene.getStylesheets().remove(darkCss);
             }
         });
+
         stage.setScene(scene);
         stage.show();
     }
