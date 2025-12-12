@@ -127,6 +127,7 @@ public class SimpleNotepad extends Application{
         textArea.textProperty().addListener((observable, oldValue, newValue) -> {
             isModified = true;
             updateStatusBar();
+            updateWindowTitle();
         });
         textArea.caretPositionProperty().addListener((obs, oldPos, newPos) -> {
             updateStatusBar();
@@ -150,12 +151,12 @@ public class SimpleNotepad extends Application{
     }
 
     private void newFile(Stage stage){
-        if (!confirmUnsavedChanged(stage)) return ;
+        if (!confirmUnsavedChanged(stage)) return;
+
         textArea.clear();
         currentFile = null;
-        primaryStage.setTitle("BuraksTextEditor - Untitled");
         isModified = false;
-
+        updateWindowTitle();
     }
 
     private void openFile(Stage stage){
@@ -174,6 +175,7 @@ public class SimpleNotepad extends Application{
                 currentFile = file;
                 primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
                 isModified = false;
+                updateWindowTitle();
             }catch (IOException e){
                 e.printStackTrace();
             }
@@ -200,6 +202,7 @@ public class SimpleNotepad extends Application{
         }
         primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
         isModified = false;
+        updateWindowTitle();
     }
     private boolean confirmUnsavedChanged(Stage stage){
         if (!isModified) return true;
@@ -255,6 +258,17 @@ public class SimpleNotepad extends Application{
 
         lineColLabel.setText("Line: " + line + ", Col: " + (column + 1));
     }
+
+    private void updateWindowTitle(){
+        String filename = (currentFile == null)
+                ? "Untitled"
+                : currentFile.getName();
+
+        String modifiedMark = isModified ? " *":"";
+        primaryStage.setTitle("BuraksTextEditor - " + filename + modifiedMark);
+    }
+
+
 
 }
 
