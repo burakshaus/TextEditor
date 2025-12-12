@@ -1,14 +1,21 @@
 package bte.burakstexteditor;
 
+import com.sun.javafx.css.StyleCacheEntry;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import java.io.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 public class SimpleNotepad extends Application{
     private TextArea textArea = new TextArea();
@@ -45,8 +52,35 @@ public class SimpleNotepad extends Application{
         copyItem.setOnAction( e -> textArea.copy());
         pasteItem.setOnAction( e -> textArea.paste());
         selectAllItem.setOnAction( e -> textArea.selectAll());
+        MenuItem undoItem = new MenuItem("Undo");
+        MenuItem redoItem = new MenuItem("Redo");
+        undoItem.setOnAction(e -> textArea.undo());
+        redoItem.setOnAction(e -> textArea.redo());
+        undoItem.setAccelerator(
+                new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN)
+        );
+        redoItem.setAccelerator(
+                new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN)
+        );
 
-        editMenu.getItems().addAll(cutItem, copyItem, pasteItem, selectAllItem);
+        cutItem.setAccelerator(
+          new KeyCodeCombination(KeyCode.X,KeyCombination.CONTROL_DOWN)
+        );
+
+        copyItem.setAccelerator(
+                new KeyCodeCombination( KeyCode.C,KeyCombination.CONTROL_DOWN)
+        );
+
+        pasteItem.setAccelerator(
+                new KeyCodeCombination(KeyCode.V,KeyCombination.CONTROL_DOWN)
+        );
+
+        selectAllItem.setAccelerator(
+                new KeyCodeCombination(KeyCode.A,KeyCombination.CONTROL_DOWN)
+        );
+
+
+        editMenu.getItems().addAll(undoItem, redoItem, new SeparatorMenuItem(), cutItem, copyItem, pasteItem, selectAllItem);
 
         HBox statusBar = new HBox();
         statusBar.setSpacing(20);
@@ -58,6 +92,20 @@ public class SimpleNotepad extends Application{
         MenuItem openFile = new MenuItem("Open");
         MenuItem saveFile = new MenuItem("Save");
         MenuItem exitApp = new MenuItem("Exit");
+
+        newFile.setAccelerator(
+                new KeyCodeCombination(KeyCode.N,KeyCombination.CONTROL_DOWN)
+        );
+
+        openFile.setAccelerator(
+                new KeyCodeCombination(KeyCode.O,KeyCombination.CONTROL_DOWN)
+        );
+
+        saveFile.setAccelerator(
+                new KeyCodeCombination(KeyCode.S,KeyCombination.CONTROL_DOWN)
+        );
+
+
 
         newFile.setOnAction(e -> newFile(stage));
         openFile.setOnAction(e -> openFile(stage));
@@ -84,6 +132,10 @@ public class SimpleNotepad extends Application{
             updateStatusBar();
         });
 
+        exitApp.setAccelerator(
+                new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
+        );
+
 
         Scene scene = new Scene(layout, 600, 400);
         darkModeItem.setOnAction(e -> {
@@ -100,8 +152,10 @@ public class SimpleNotepad extends Application{
     private void newFile(Stage stage){
         if (!confirmUnsavedChanged(stage)) return ;
         textArea.clear();
-        primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
         currentFile = null;
+        primaryStage.setTitle("BuraksTextEditor - Untitled");
+        isModified = false;
+
     }
 
     private void openFile(Stage stage){
@@ -145,6 +199,7 @@ public class SimpleNotepad extends Application{
             }
         }
         primaryStage.setTitle("BuraksTextEditor - " + currentFile.getName());
+        isModified = false;
     }
     private boolean confirmUnsavedChanged(Stage stage){
         if (!isModified) return true;
