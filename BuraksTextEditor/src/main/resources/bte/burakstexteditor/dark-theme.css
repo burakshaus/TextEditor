@@ -16,3 +16,7 @@
 .label {
     -fx-text-fill: white;
 }
+/* dark-theme.css */
+.status-bar {
+    -fx-background-color: #2b2b2b;
+}
