@@ -72,7 +72,7 @@ public class SimpleNotepad extends Application{
         );
 
         cutItem.setAccelerator(
-          new KeyCodeCombination(KeyCode.X,KeyCombination.CONTROL_DOWN)
+                new KeyCodeCombination(KeyCode.X,KeyCombination.CONTROL_DOWN)
         );
 
         copyItem.setAccelerator(
@@ -292,4 +292,3 @@ public class SimpleNotepad extends Application{
 
 
 }
-
